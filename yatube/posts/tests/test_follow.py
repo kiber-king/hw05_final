@@ -51,4 +51,3 @@ class FollowTest(TestCase):
         self.assertIn(post, response.context['page_obj'].object_list)
         response_2 = self.authorized_client_2.get(self.FOLLOW_INDEX)
         self.assertNotIn(post, response_2.context['page_obj'].object_list)
-

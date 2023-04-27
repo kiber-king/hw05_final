@@ -24,7 +24,7 @@ class TestCache(TestCase):
 
     def test_cache(self):
         response = self.authorized_client.get(self.INDEX)
-        new_post = Post.objects.create(
+        Post.objects.create(
             text='new text',
             author=self.user
         )

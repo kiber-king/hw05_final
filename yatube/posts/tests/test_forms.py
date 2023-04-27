@@ -99,7 +99,7 @@ class PostFormTest(TestCase):
         form_data = {
             'text': 'New text'
         }
-        response = self.guest_client.post(
+        self.guest_client.post(
             reverse('posts:add_comment', args=(self.post.id,)), data=form_data,
             follow=True)
         self.assertNotEqual(comments_count + 1, Comment.objects.count())
@@ -107,8 +107,8 @@ class PostFormTest(TestCase):
             reverse('posts:add_comment', args=(self.post.id,)), data=form_data,
             follow=True)
         comment_latest = Comment.objects.latest('id')
-        auth = reverse('login') + '?next=' + reverse('posts:add_comment',
-                                                     args=(self.post.id,))
+        reverse('login') + '?next=' + reverse('posts:add_comment',
+                                              args=(self.post.id,))
         self.assertEqual(form_data['text'], comment_latest.text)
         self.assertRedirects(response_2, reverse('posts:post_detail',
                                                  args=(self.post.id,)))
