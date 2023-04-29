@@ -43,7 +43,7 @@ class FollowTest(TestCase):
         Follow.objects.create(user=self.user, author=self.user_2)
         follow_count = Follow.objects.count()
         self.authorized_client.get(self.UNFOLLOW)
-        self.assertEqual(Follow.objects.count(), follow_count-1)
+        self.assertEqual(Follow.objects.count(), follow_count - 1)
 
     def test_following_index(self):
         following = User.objects.create(username='following')
