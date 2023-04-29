@@ -26,22 +26,24 @@ class FollowTest(TestCase):
             text='Super',
             author=cls.user
         )
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.user)
+        cls.authorized_client_2 = Client()
+        cls.authorized_client_2.force_login(cls.user_2)
         cls.FOLLOW_INDEX = reverse('posts:follow_index')
-
-    def setUp(self):
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
-        self.authorized_client_2 = Client()
-        self.authorized_client_2.force_login(self.user_2)
+        cls.FOLLOW = reverse('posts:profile_follow', args=(cls.user_2,))
+        cls.UNFOLLOW = reverse('posts:profile_unfollow', args=(cls.user_2,))
 
     def test_follow_and_unfollow(self):
         follow_count = Follow.objects.count()
-        self.authorized_client.get(
-            reverse('posts:profile_follow', args=(self.user_2,)))
+        self.authorized_client.get(self.FOLLOW)
         self.assertEqual(Follow.objects.count(), follow_count + 1)
-        self.authorized_client.get(
-            reverse('posts:profile_unfollow', args=(self.user_2,)))
-        self.assertEqual(Follow.objects.count(), follow_count)
+
+    def test_unfollow(self):
+        Follow.objects.create(user=self.user, author=self.user_2)
+        follow_count = Follow.objects.count()
+        self.authorized_client.get(self.UNFOLLOW)
+        self.assertEqual(Follow.objects.count(), follow_count-1)
 
     def test_following_index(self):
         following = User.objects.create(username='following')

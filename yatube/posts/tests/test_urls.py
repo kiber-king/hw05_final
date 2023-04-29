@@ -21,12 +21,9 @@ class StaticURLTests(TestCase):
             author=cls.user,
             text='test',
         )
-        cls
-
-    def setUp(self):
-        self.guest_client = Client()
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
+        cls.guest_client = Client()
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.user)
 
     def test_all_temp_guest_client(self):
         addresses = [
@@ -43,7 +40,10 @@ class StaticURLTests(TestCase):
             ['/create/', 'posts/create_post.html', self.authorized_client,
              HTTPStatus.OK],
             [f'/posts/{self.post.id}/edit/', 'posts/create_post.html',
-             self.authorized_client, HTTPStatus.OK]]
+             self.authorized_client, HTTPStatus.OK],
+            ['/follow/', 'posts/follow.html', self.authorized_client,
+             HTTPStatus.OK]]
+
         for address, template, client, status_code in addresses:
             with self.subTest(address=address, client=client):
                 response = client.get(address)

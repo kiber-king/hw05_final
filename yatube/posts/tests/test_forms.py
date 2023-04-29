@@ -10,6 +10,14 @@ from ..models import Post, Group, get_user_model, Comment
 
 User = get_user_model()
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+SMALL_GIF = (
+    b'\x47\x49\x46\x38\x39\x61\x02\x00'
+    b'\x01\x00\x80\x00\x00\x00\x00\x00'
+    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+    b'\x0A\x00\x3B'
+)
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
@@ -28,17 +36,9 @@ class PostFormTest(TestCase):
             description='Новое тестовое описание группы 2'
         )
         cls.CREATE_POST = reverse('posts:create_post')
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
         cls.uploaded = SimpleUploadedFile(
             name='small.gif',
-            content=small_gif,
+            content=SMALL_GIF,
             content_type='image/gif'
         )
         cls.post = Post.objects.create(
@@ -46,11 +46,9 @@ class PostFormTest(TestCase):
             author=cls.user,
             group=cls.group_1,
         )
-
-    def setUp(self):
-        self.guest_client = Client()
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
+        cls.guest_client = Client()
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.user)
 
     def test_create_post(self):
         posts_count = Post.objects.count()

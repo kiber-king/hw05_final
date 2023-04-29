@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
+from .test_forms import SMALL_GIF
 from ..models import Post, Group, get_user_model
 from ..utils import LATEST_POSTS_COUNT
 
@@ -30,17 +31,9 @@ class ViewsTests(TestCase):
             slug='group_2',
             description='TEst2'
         )
-        small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
         uploaded = SimpleUploadedFile(
             name='small.gif',
-            content=small_gif,
+            content=SMALL_GIF,
             content_type='image/gif'
         )
         cls.post = Post.objects.create(
@@ -61,11 +54,9 @@ class ViewsTests(TestCase):
                                 kwargs={
                                     'post_id': f'{cls.post.id}'})
         cls.POST_CREATE = reverse('posts:create_post')
-
-    def setUp(self):
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
-        self.form_fields = {
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.user)
+        cls.form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField,
         }
